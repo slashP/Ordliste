@@ -14,23 +14,26 @@
 <input id="word" type="text"/>
 
 <script>
-    $("#word").on('keyup', function () {
-        delay(function() {
-            $.get('/Home/WordExists?word=' + $("#word").val(), function(data) {
-                var setStyle = function (color) {
-                    $("#word").css('border', '2px solid ' + color);
-                    $("#word").css('color', color);
-                };
-                if (data.IsValid) {
-                    setStyle('green');
-                } else if(!data.IsValid) {
-                    setStyle('red');
-                } else {
-                    setStyle('white');
-                }
-            });
-        }, 300);
+    $(document).ready(function() {
+        $("#word").on('keyup', function () {
+            delay(function () {
+                $.get('/Home/WordExists?word=' + $("#word").val(), function (data) {
+                    var setStyle = function (color) {
+                        $("#word").css('border', '2px solid ' + color);
+                        $("#word").css('color', color);
+                    };
+                    if (data.IsValid) {
+                        setStyle('green');
+                    } else if (!data.IsValid) {
+                        setStyle('red');
+                    } else {
+                        setStyle('white');
+                    }
+                });
+            }, 300);
+        });
     });
+    
     var delay = (function () {
         var timer = 0;
         return function (callback, ms) {
