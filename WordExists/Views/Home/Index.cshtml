@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h2>Søk etter norske ord og se om de finnes i ordboka!</h2>
+            </hgroup>
+        </div>
+    </section>
+}
+
+<input id="word" type="text"/>
+
+<script>
+    $("#word").on('keyup', function () {
+        delay(function() {
+            $.get('/Home/WordExists?word=' + $("#word").val(), function(data) {
+                var setStyle = function (color) {
+                    $("#word").css('border', '2px solid ' + color);
+                    $("#word").css('color', color);
+                };
+                if (data.IsValid) {
+                    setStyle('green');
+                } else if(!data.IsValid) {
+                    setStyle('red');
+                } else {
+                    setStyle('white');
+                }
+            });
+        }, 300);
+    });
+    var delay = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+            clearTimeout(timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+</script>
