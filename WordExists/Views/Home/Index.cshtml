@@ -24,7 +24,7 @@
                     };
                     if (data.IsValid) {
                         setStyle('green');
-                    } else if (!data.IsValid) {
+                    } else if (!data.IsValid && $("#word").val().length > 0) {
                         setStyle('red');
                     } else {
                         setStyle('white');
