@@ -20,12 +20,12 @@ namespace WordExists.Controllers
 
         public static bool WordIsContainedInSequence(string word, string sequence)
         {
-            var w = word;
-            string[] random = { sequence };
+            var w = word.ToUpper();
             var count = 0;
-            foreach (var index in w.Select(c => random[0].IndexOf(c)).Where(index => index > 0 && index < random[0].Length))
-            {
-                random[0] = random[0].Remove(index);
+            foreach (var character in w) {
+                var index = sequence.IndexOf(character);
+                if (index < 0 || index >= sequence.Length) continue;
+                sequence = sequence.Remove(index, 1);
                 count++;
             }
             return count == w.Length;
