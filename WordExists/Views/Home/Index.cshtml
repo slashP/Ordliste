@@ -1,4 +1,5 @@
-﻿@{
+﻿@model WordExists.Controllers.HomeViewModel
+@{
     ViewBag.Title = "Home Page";
 }
 @section featured {
@@ -11,23 +12,29 @@
     </section>
 }
 
+<div id="randomWord">@Model.RandomWord</div>
+<div id="rightWords"></div>
 <input id="word" type="text"/>
 
 <script>
-    $(document).ready(function() {
+    var numberOfRightWords = 0;
+    $(document).ready(function () {
+        var randomWord = "@Model.RandomWord";
         $("#word").on('keyup', function () {
             delay(function () {
-                $.get('/Home/WordExists?word=' + $("#word").val(), function (data) {
+                var urlExtension = 'word=' + $("#word").val() + '&randomWord=' + randomWord;
+                $.get('/Home/WordExists?' + urlExtension, function (data) {
                     var setStyle = function (color) {
                         $("#word").css('border', '2px solid ' + color);
                         $("#word").css('color', color);
                     };
+                    var setRightWords = function (num) { $("#rightWords").html(num); };
                     if (data.IsValid) {
                         setStyle('green');
                     } else if (!data.IsValid && $("#word").val().length > 0) {
                         setStyle('red');
                     } else {
-                        setStyle('white');
+                        setStyle('grey');
                     }
                 });
             }, 300);

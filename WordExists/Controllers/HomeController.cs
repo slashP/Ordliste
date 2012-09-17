@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
 
 namespace WordExists.Controllers
@@ -12,19 +8,20 @@ namespace WordExists.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
-
-            return View();
+            var homeViewModel = new HomeViewModel();
+            return View(homeViewModel);
         }
 
-        public JsonResult WordExists(string word)
+        public JsonResult WordExists(string word, string randomWord)
         {
-            var hashSet = (HashSet<string>) HttpContext.Cache["ordliste"];
-            var res = new Response
+            var hashSet = GetCachedWords();
+            var res = new WordResponse
                 {
                     IsValid = hashSet.Contains(word),
-                    Word = word
+                    Word = word,
+                    RandomWord = randomWord
                 };
+            res.IsContained = RandomString.WordIsContainedInSequence(word, randomWord);
             return
                 Json(res, JsonRequestBehavior.AllowGet);
         }
@@ -35,30 +32,30 @@ namespace WordExists.Controllers
             return View();
         }
 
-        public ActionResult Les()
+        private HashSet<string> GetCachedWords()
+        {
+            if (HttpContext.Cache["ordliste"] == null) {
+                ReadWordsIntoCache();
+            }
+            return (HashSet<string>) HttpContext.Cache["ordliste"];
+        }
+
+        private void ReadWordsIntoCache()
         {
             var path = HttpContext.Server.MapPath("~/App_Data/ordliste.sql");
             var file = new StreamReader(path);
             var ordliste = new HashSet<string>();
             string line;
-            while ((line = file.ReadLine()) != null)
-            {
+            while ((line = file.ReadLine()) != null) {
                 ordliste.Add(line.Split(',')[1].Trim());
             }
             HttpContext.Cache.Insert("ordliste", ordliste);
-            return null;
         }
 
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
-
             return View();
         }
-    }
-    public class Response
-    {
-        public bool IsValid { get; set; }
-        public string Word { get; set; }
     }
 }
